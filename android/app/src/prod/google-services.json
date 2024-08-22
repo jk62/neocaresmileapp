@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "301952263004",
+    "project_id": "neocaresmileapp-prod",
+    "storage_bucket": "neocaresmileapp-prod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301952263004:android:5ce58b90340184f9f75799",
+        "android_client_info": {
+          "package_name": "com.neocareapps.neocaresmileapp.prod"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEvOxyhcCKRU4YUUvMIYqOavsUGcJmW4k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
