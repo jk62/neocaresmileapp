@@ -1,0 +1,41 @@
+import 'package:flutter/material.dart';
+
+class MyColors {
+  static final Map<String, Color> colorPalette = {
+    "primary": const Color(0xFF008D90),
+    "on-primary": const Color(0xFFFFFFFF),
+    "primary-container": const Color(0xFF64F1F4),
+    "on-primary-container": const Color(0xFF005154),
+    "secondary": const Color(0xFF586C6E),
+    "on-secondary": const Color(0xFFFFFFFF),
+    "secondary-container": const Color(0xFFBCD0D2),
+    "on-secondary-container": const Color(0xFF1C3032),
+    "tertiary": const Color(0xFF763CA3),
+    "on-tertiary": const Color(0xFFFFFFFF),
+    "tertiary-container": const Color(0xFFDAA0FF),
+    "on-tertiary-container": const Color(0xFF3A0067),
+    "surface-dim": const Color(0xFFA1B7B8),
+    "surface": const Color(0xFFB5CBCC),
+    "surface-bright": const Color(0xFFC9DFE0),
+    "surface-container-lowest": const Color(0xFFFFFFFF),
+    "surface-container-low": const Color(0xFFB5CBCC),
+    "surface-container": const Color(0xFFB5CBCC),
+    "surface-container-high": const Color(0xFFA1B7B8),
+    "surface-container-highest": const Color(0xFFA1B7B8),
+    "on-surface": const Color(0xFF011718),
+    "on-surface-variant": const Color(0xFF818687),
+    "outline": const Color(0xFFA9AEAF),
+    "outline-variant": const Color(0xFFE5EAEB),
+    "error": const Color(0xFFCE3C3C),
+    "on-error": const Color(0xFFFFFFFF),
+    "error-container": const Color(0xFFFFA0A0),
+    "on-error-container": const Color(0xFF920000),
+    "success": const Color(0xFF47B63E),
+    "on-success": const Color(0xFFFFFFFF),
+    "success-container": const Color(0xFFABFFA2),
+    "on-success-container": const Color(0xFF0B7A02),
+  };
+}
+
+// "value": "#011718",
+// "value": "#818687",

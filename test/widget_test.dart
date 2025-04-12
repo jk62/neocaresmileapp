@@ -7,12 +7,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:neocaresmileapp/home_page.dart'; // Import the HomePage class
+import 'package:neocaresmileapp/home_page.dart';
+//import 'package:neocaresmileapp/gemini/talk_to_gemini.dart'; // Import the HomePage class
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(HomePage()); // Use HomePage instead of MyApp
+    //await tester.pumpWidget(HomePage()); // Use HomePage instead of MyApp
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

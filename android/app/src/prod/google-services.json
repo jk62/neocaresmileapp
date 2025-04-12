@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "301952263004",
-    "project_id": "neocaresmileapp-prod",
-    "storage_bucket": "neocaresmileapp-prod.appspot.com"
+    "project_number": "589102946015",
+    "project_id": "neocaresmileapp-prod-d6930",
+    "storage_bucket": "neocaresmileapp-prod-d6930.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:301952263004:android:5ce58b90340184f9f75799",
+        "mobilesdk_app_id": "1:589102946015:android:2e4ffd85def4d8c589bb6a",
         "android_client_info": {
-          "package_name": "com.neocareapps.neocaresmileapp.prod"
+          "package_name": "com.neocareapps.neocaresmileapp"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBEvOxyhcCKRU4YUUvMIYqOavsUGcJmW4k"
+          "current_key": "AIzaSyBwu6eA2yHUEETD8kO10-9dhOyxh2o6rxQ"
         }
       ],
       "services": {

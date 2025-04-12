@@ -1,142 +1,378 @@
-import 'package:flutter/material.dart';
+// flutter run --flavor dev -t lib/main_dev.dart
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options_dev.dart'; // For development environment
-import 'home_page.dart'; // Import the HomePage class
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neocaresmileapp/constants/routes.dart';
+import 'package:neocaresmileapp/firebase_options_dev.dart';
+import 'package:neocaresmileapp/helpers/loading_screen.dart';
+import 'package:neocaresmileapp/home_page.dart';
+import 'package:neocaresmileapp/mywidgets/appointment_provider.dart';
+import 'package:neocaresmileapp/mywidgets/clinic_selection.dart';
+import 'package:neocaresmileapp/mywidgets/custom_route_observer.dart';
+import 'package:neocaresmileapp/mywidgets/image_cache_provider.dart';
+import 'package:neocaresmileapp/mywidgets/mycolors.dart';
+import 'package:neocaresmileapp/mywidgets/procedure_cache_provider.dart';
+import 'package:neocaresmileapp/mywidgets/recent_patient_provider.dart';
+import 'package:neocaresmileapp/mywidgets/user_data_provider.dart';
+import 'package:neocaresmileapp/services/auth/firebase_auth_provider.dart';
+import 'package:neocaresmileapp/services/bloc/auth_bloc.dart';
+import 'package:neocaresmileapp/services/bloc/auth_event.dart';
+import 'package:neocaresmileapp/services/bloc/auth_state.dart';
+import 'package:neocaresmileapp/views/forgot_password_view.dart';
+import 'package:neocaresmileapp/views/login_view.dart';
+import 'package:neocaresmileapp/views/pending_approval_view.dart';
+import 'package:neocaresmileapp/views/register_view.dart';
+import 'package:neocaresmileapp/views/verify_email_view.dart';
+import 'package:provider/provider.dart';
+import 'dart:developer' as devtools show log;
 
 void main() async {
+  devtools.log('This is coming from void main of main.dart');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(HomePage()); // Use HomePage instead of MyApp
+  runApp(const MyApp());
 }
 
-// flutterfire configure --project=neocaresmileapp-dev --out=lib/firebase_options_dev.dart
-// flutterfire configure --project=neocaresmileapp-prod --out=lib/firebase_options_prod.dart
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+class _MyAppState extends State<MyApp> {
+  late AuthBloc _authBloc;
+  final CustomRouteObserver _customRouteObserver = CustomRouteObserver();
+
+  @override
+  void initState() {
+    super.initState();
+    _authBloc = AuthBloc(FirebaseAuthProvider());
+    _authBloc.add(const AuthEventInitialize());
+  }
+
+  @override
+  void dispose() {
+    _authBloc.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
+    return BlocProvider<AuthBloc>.value(
+      value: _authBloc,
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          devtools
+              .log('💡 AuthState: ${state.runtimeType} triggered in main.dart');
+
+          return MaterialApp(
+            theme: ThemeData(primaryColor: MyColors.colorPalette['primary']),
+            debugShowCheckedModeBanner: false,
+            navigatorObservers: [_customRouteObserver],
+            routes: {
+              loginRoute: (context) => const LoginView(),
+              registerRoute: (context) => const RegisterView(),
+              forgotPasswordRoute: (context) => const ForgotPasswordView(),
+              verifyEmailRoute: (context) => const VerifyEmailView(),
+            },
+            home: Builder(
+              builder: (context) {
+                if (state is AuthStateLoggedOut) {
+                  return const LoginView();
+                } else if (state is AuthStateRegistering) {
+                  return const RegisterView();
+                } else if (state is AuthStateNeedsVerification) {
+                  return const VerifyEmailView(); // Show the verification view
+                } else if (state is AuthStatePendingApproval) {
+                  return const PendingApprovalView();
+                } else if (state is AuthStateLoggedIn) {
+                  final doctorData = state.doctorData;
+                  return MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider<ClinicSelection>(
+                        create: (_) {
+                          final clinicSelection = ClinicSelection.instance;
+                          String doctorId = state.user.id;
+                          List<dynamic>? clinicsMapped =
+                              doctorData['clinicsMapped'];
+                          List<String> clinicNames = [];
+                          String selectedClinicName = '';
+                          String selectedClinicId = '';
+
+                          if (clinicsMapped != null &&
+                              clinicsMapped.isNotEmpty) {
+                            clinicNames = clinicsMapped
+                                .map((clinic) => clinic['clinicName'] as String)
+                                .toList();
+                            selectedClinicName = clinicNames.first;
+                            selectedClinicId =
+                                clinicsMapped[0]['clinicId'] as String;
+                          }
+
+                          clinicSelection.setDoctorId(doctorId);
+                          clinicSelection.updateParameters(selectedClinicName,
+                              clinicNames, selectedClinicId);
+                          return clinicSelection;
+                        },
+                      ),
+                      ChangeNotifierProxyProvider<ClinicSelection,
+                          UserDataProvider>(
+                        create: (_) => UserDataProvider(),
+                        update: (_, clinicSelection, userDataProvider) {
+                          userDataProvider!
+                              .setClinicId(clinicSelection.selectedClinicId);
+                          return userDataProvider;
+                        },
+                      ),
+                      ChangeNotifierProxyProvider<ClinicSelection,
+                          AppointmentProvider>(
+                        create: (_) => AppointmentProvider(),
+                        update: (_, clinicSelection, appointmentProvider) {
+                          appointmentProvider?.updateClinicAndDoctor(
+                            clinicSelection.selectedClinicId,
+                            clinicSelection.doctorId,
+                          );
+                          return appointmentProvider!;
+                        },
+                      ),
+                      ChangeNotifierProxyProvider<ClinicSelection,
+                          RecentPatientProvider>(
+                        create: (_) => RecentPatientProvider(),
+                        update: (_, clinicSelection, recentPatientProvider) {
+                          recentPatientProvider!
+                              .setClinicId(clinicSelection.selectedClinicId);
+                          return recentPatientProvider;
+                        },
+                      ),
+                      ChangeNotifierProxyProvider<ClinicSelection,
+                          ImageCacheProvider>(
+                        create: (_) => ImageCacheProvider(),
+                        update: (_, clinicSelection, imageCacheProvider) {
+                          imageCacheProvider!
+                              .setClinicId(clinicSelection.selectedClinicId);
+                          return imageCacheProvider;
+                        },
+                      ),
+                      ChangeNotifierProxyProvider<ClinicSelection,
+                          ProcedureCacheProvider>(
+                        create: (_) => ProcedureCacheProvider(),
+                        update: (_, clinicSelection, procedureCacheProvider) {
+                          procedureCacheProvider!
+                              .setClinicId(clinicSelection.selectedClinicId);
+                          return procedureCacheProvider;
+                        },
+                      ),
+                    ],
+                    child: HomePage(doctorData: doctorData),
+                  );
+                } else {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+// CODE BELOW BEFORE CLINIC SELECTION MOVED UP
+// import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:neocare_dental_app/constants/routes.dart';
+// import 'package:neocare_dental_app/firebase_options.dart';
+// import 'package:neocare_dental_app/helpers/loading_screen.dart';
+// import 'package:neocare_dental_app/home_page.dart';
+// import 'package:neocare_dental_app/mywidgets/appointment_provider.dart';
+// import 'package:neocare_dental_app/mywidgets/clinic_selection.dart';
+// import 'package:neocare_dental_app/mywidgets/custom_route_observer.dart';
+// import 'package:neocare_dental_app/mywidgets/image_cache_provider.dart';
+// import 'package:neocare_dental_app/mywidgets/mycolors.dart';
+// import 'package:neocare_dental_app/mywidgets/procedure_cache_provider.dart';
+// import 'package:neocare_dental_app/mywidgets/recent_patient_provider.dart';
+// import 'package:neocare_dental_app/mywidgets/user_data_provider.dart';
+// import 'package:neocare_dental_app/services/auth/firebase_auth_provider.dart';
+// import 'package:neocare_dental_app/services/bloc/auth_bloc.dart';
+// import 'package:neocare_dental_app/services/bloc/auth_event.dart';
+// import 'package:neocare_dental_app/services/bloc/auth_state.dart';
+// import 'package:neocare_dental_app/views/forgot_password_view.dart';
+// import 'package:neocare_dental_app/views/login_view.dart';
+// import 'package:neocare_dental_app/views/pending_approval_view.dart';
+// import 'package:neocare_dental_app/views/register_view.dart';
+// import 'package:neocare_dental_app/views/verify_email_view.dart';
+// import 'package:provider/provider.dart';
+// import 'dart:developer' as devtools show log;
 
-// void main() {
+// void main() async {
+//   devtools.log('This is coming from void main of main.dart');
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp(
+//     options: DefaultFirebaseOptions.currentPlatform,
+//   );
 //   runApp(const MyApp());
 // }
 
-// class MyApp extends StatelessWidget {
+// class MyApp extends StatefulWidget {
 //   const MyApp({super.key});
-
-//   // This widget is the root of your application.
 //   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         // This is the theme of your application.
-//         //
-//         // TRY THIS: Try running your application with "flutter run". You'll see
-//         // the application has a purple toolbar. Then, without quitting the app,
-//         // try changing the seedColor in the colorScheme below to Colors.green
-//         // and then invoke "hot reload" (save your changes or press the "hot
-//         // reload" button in a Flutter-supported IDE, or press "r" if you used
-//         // the command line to start the app).
-//         //
-//         // Notice that the counter didn't reset back to zero; the application
-//         // state is not lost during the reload. To reset the state, use hot
-//         // restart instead.
-//         //
-//         // This works for code too, not just values: Most code changes can be
-//         // tested with just a hot reload.
-//         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-//         useMaterial3: true,
-//       ),
-//       home: const MyHomePage(title: 'Flutter Demo Home Page'),
-//     );
+//   State<MyApp> createState() => _MyAppState();
+// }
+
+// class _MyAppState extends State<MyApp> {
+//   late AuthBloc _authBloc;
+//   final CustomRouteObserver _customRouteObserver = CustomRouteObserver();
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _authBloc = AuthBloc(FirebaseAuthProvider());
+//     _authBloc.add(const AuthEventInitialize());
 //   }
-// }
-
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({super.key, required this.title});
-
-//   // This widget is the home page of your application. It is stateful, meaning
-//   // that it has a State object (defined below) that contains fields that affect
-//   // how it looks.
-
-//   // This class is the configuration for the state. It holds the values (in this
-//   // case the title) provided by the parent (in this case the App widget) and
-//   // used by the build method of the State. Fields in a Widget subclass are
-//   // always marked "final".
-
-//   final String title;
 
 //   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   int _counter = 0;
-
-//   void _incrementCounter() {
-//     setState(() {
-//       // This call to setState tells the Flutter framework that something has
-//       // changed in this State, which causes it to rerun the build method below
-//       // so that the display can reflect the updated values. If we changed
-//       // _counter without calling setState(), then the build method would not be
-//       // called again, and so nothing would appear to happen.
-//       _counter++;
-//     });
+//   void dispose() {
+//     _authBloc.close();
+//     super.dispose();
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
-//     // This method is rerun every time setState is called, for instance as done
-//     // by the _incrementCounter method above.
-//     //
-//     // The Flutter framework has been optimized to make rerunning build methods
-//     // fast, so that you can just rebuild anything that needs updating rather
-//     // than having to individually change instances of widgets.
-//     return Scaffold(
-//       appBar: AppBar(
-//         // TRY THIS: Try changing the color here to a specific color (to
-//         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-//         // change color while the other colors stay the same.
-//         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-//         // Here we take the value from the MyHomePage object that was created by
-//         // the App.build method, and use it to set our appbar title.
-//         title: Text(widget.title),
-//       ),
-//       body: Center(
-//         // Center is a layout widget. It takes a single child and positions it
-//         // in the middle of the parent.
-//         child: Column(
-//           // Column is also a layout widget. It takes a list of children and
-//           // arranges them vertically. By default, it sizes itself to fit its
-//           // children horizontally, and tries to be as tall as its parent.
-//           //
-//           // Column has various properties to control how it sizes itself and
-//           // how it positions its children. Here we use mainAxisAlignment to
-//           // center the children vertically; the main axis here is the vertical
-//           // axis because Columns are vertical (the cross axis would be
-//           // horizontal).
-//           //
-//           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-//           // action in the IDE, or press "p" in the console), to see the
-//           // wireframe for each widget.
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             const Text(
-//               'You have pushed the button this many times:',
+//     SystemChrome.setPreferredOrientations([
+//       DeviceOrientation.portraitUp,
+//       DeviceOrientation.portraitDown,
+//     ]);
+
+//     return BlocProvider<AuthBloc>.value(
+//       value: _authBloc,
+//       child: BlocBuilder<AuthBloc, AuthState>(
+//         builder: (context, state) {
+//           devtools
+//               .log('💡 AuthState: ${state.runtimeType} triggered in main.dart');
+
+//           return MaterialApp(
+//             theme: ThemeData(primaryColor: MyColors.colorPalette['primary']),
+//             debugShowCheckedModeBanner: false,
+//             navigatorObservers: [_customRouteObserver],
+//             routes: {
+//               loginRoute: (context) => const LoginView(),
+//               registerRoute: (context) => const RegisterView(),
+//               forgotPasswordRoute: (context) => const ForgotPasswordView(),
+//               verifyEmailRoute: (context) => const VerifyEmailView(),
+//             },
+//             home: Builder(
+//               builder: (context) {
+//                 if (state is AuthStateLoggedOut) {
+//                   return const LoginView();
+//                 } else if (state is AuthStateRegistering) {
+//                   return const RegisterView();
+//                 } else if (state is AuthStatePendingApproval) {
+//                   return const PendingApprovalView();
+//                 } else if (state is AuthStateLoggedIn) {
+//                   final doctorData = state.doctorData;
+//                   return MultiProvider(
+//                     providers: [
+//                       ChangeNotifierProvider<ClinicSelection>(
+//                         create: (_) {
+//                           final clinicSelection = ClinicSelection.instance;
+//                           String doctorId = state.user.id;
+//                           List<dynamic>? clinicsMapped =
+//                               doctorData['clinicsMapped'];
+//                           List<String> clinicNames = [];
+//                           String selectedClinicName = '';
+//                           String selectedClinicId = '';
+
+//                           if (clinicsMapped != null &&
+//                               clinicsMapped.isNotEmpty) {
+//                             clinicNames = clinicsMapped
+//                                 .map((clinic) => clinic['clinicName'] as String)
+//                                 .toList();
+//                             selectedClinicName = clinicNames.first;
+//                             selectedClinicId =
+//                                 clinicsMapped[0]['clinicId'] as String;
+//                           }
+
+//                           clinicSelection.setDoctorId(doctorId);
+//                           clinicSelection.updateParameters(selectedClinicName,
+//                               clinicNames, selectedClinicId);
+//                           return clinicSelection;
+//                         },
+//                       ),
+//                       ChangeNotifierProxyProvider<ClinicSelection,
+//                           UserDataProvider>(
+//                         create: (_) => UserDataProvider(),
+//                         update: (_, clinicSelection, userDataProvider) {
+//                           userDataProvider!
+//                               .setClinicId(clinicSelection.selectedClinicId);
+//                           return userDataProvider;
+//                         },
+//                       ),
+//                       ChangeNotifierProxyProvider<ClinicSelection,
+//                           AppointmentProvider>(
+//                         create: (_) => AppointmentProvider(),
+//                         update: (_, clinicSelection, appointmentProvider) {
+//                           appointmentProvider?.updateClinicAndDoctor(
+//                             clinicSelection.selectedClinicId,
+//                             clinicSelection.doctorId,
+//                           );
+//                           return appointmentProvider!;
+//                         },
+//                       ),
+//                       ChangeNotifierProxyProvider<ClinicSelection,
+//                           RecentPatientProvider>(
+//                         create: (_) => RecentPatientProvider(),
+//                         update: (_, clinicSelection, recentPatientProvider) {
+//                           recentPatientProvider!
+//                               .setClinicId(clinicSelection.selectedClinicId);
+//                           return recentPatientProvider;
+//                         },
+//                       ),
+//                       ChangeNotifierProxyProvider<ClinicSelection,
+//                           ImageCacheProvider>(
+//                         create: (_) => ImageCacheProvider(),
+//                         update: (_, clinicSelection, imageCacheProvider) {
+//                           imageCacheProvider!
+//                               .setClinicId(clinicSelection.selectedClinicId);
+//                           return imageCacheProvider;
+//                         },
+//                       ),
+//                       ChangeNotifierProxyProvider<ClinicSelection,
+//                           ProcedureCacheProvider>(
+//                         create: (_) => ProcedureCacheProvider(),
+//                         update: (_, clinicSelection, procedureCacheProvider) {
+//                           procedureCacheProvider!
+//                               .setClinicId(clinicSelection.selectedClinicId);
+//                           return procedureCacheProvider;
+//                         },
+//                       ),
+//                     ],
+//                     child: HomePage(doctorData: doctorData),
+//                   );
+//                 } else {
+//                   return const Scaffold(
+//                     body: Center(child: CircularProgressIndicator()),
+//                   );
+//                 }
+//               },
 //             ),
-//             Text(
-//               '$_counter',
-//               style: Theme.of(context).textTheme.headlineMedium,
-//             ),
-//           ],
-//         ),
+//           );
+//         },
 //       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: _incrementCounter,
-//         tooltip: 'Increment',
-//         child: const Icon(Icons.add),
-//       ), // This trailing comma makes auto-formatting nicer for build methods.
 //     );
 //   }
 // }
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ??

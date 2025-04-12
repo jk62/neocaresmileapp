@@ -1,0 +1,111 @@
+import 'package:flutter/material.dart';
+
+class MyTextStyle {
+  static final Map<String, TextStyle> textStyleMap = {
+    "display-large": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w400,
+      fontSize: 57.0,
+      letterSpacing: -0.25,
+      height: 64.0 / 57.0,
+    ),
+    "display-medium": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w400,
+      fontSize: 45.0,
+      letterSpacing: 0,
+      height: 52.0 / 45.0,
+    ),
+    "display-small": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w400,
+      fontSize: 36.0,
+      letterSpacing: 0,
+      height: 44.0 / 36.0,
+    ),
+    "headline-large": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w400,
+      fontSize: 32.0,
+      letterSpacing: 0,
+      height: 40.0 / 32.0,
+    ),
+    "headline-medium": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w400,
+      fontSize: 28.0,
+      letterSpacing: 0,
+      height: 36.0 / 28.0,
+    ),
+    "headline-small": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w400,
+      fontSize: 24.0,
+      letterSpacing: 0,
+      height: 32.0 / 24.0,
+    ),
+    "title-large": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w400,
+      fontSize: 22.0,
+      letterSpacing: 0,
+      height: 28.0 / 22.0,
+    ),
+    "title-medium": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w500,
+      fontSize: 16.0,
+      letterSpacing: 0.15,
+      height: 24.0 / 16.0,
+    ),
+    "title-small": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w500,
+      fontSize: 14.0,
+      letterSpacing: 0.1,
+      height: 20.0 / 14.0,
+    ),
+    "label-large": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w500,
+      fontSize: 14.0,
+      letterSpacing: 0.1,
+      height: 20.0 / 14.0,
+    ),
+    "label-medium": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w500,
+      fontSize: 12.0,
+      letterSpacing: 0.5,
+      height: 16.0 / 12.0,
+    ),
+    "label-small": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w500,
+      fontSize: 11.0,
+      letterSpacing: 0.5,
+      height: 16.0 / 11.0,
+    ),
+    "body-large": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w500,
+      fontSize: 16.0,
+      letterSpacing: 0.5,
+      height: 24.0 / 16.0,
+    ),
+    "body-medium": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w400,
+      fontSize: 14.0,
+      letterSpacing: 0.25,
+      height: 20.0 / 14.0,
+    ),
+    "body-small": const TextStyle(
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.w400,
+      fontSize: 12.0,
+      letterSpacing: 0.4,
+      height: 16.0 / 12.0,
+    ),
+  };
+}

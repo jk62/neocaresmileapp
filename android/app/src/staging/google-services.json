@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "295848318344",
+    "project_id": "neocaresmileapp-staging-9cfe7",
+    "storage_bucket": "neocaresmileapp-staging-9cfe7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295848318344:android:80a25e207afb5c4946563d",
+        "android_client_info": {
+          "package_name": "com.neocareapps.neocaresmileapp.staging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDucGS7xGTwEtdIvPg9-gDLqEBbYlRjI5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
