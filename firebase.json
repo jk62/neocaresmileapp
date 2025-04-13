@@ -1,1 +1,63 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"neocaresmileapp-staging-9cfe7","appId":"1:295848318344:android:26c06dcab861af0b46563d","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"neocaresmileapp-staging-9cfe7","appId":"1:295848318344:ios:fb793de479f2f9f746563d","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"neocaresmileapp-staging-9cfe7","appId":"1:295848318344:ios:fb793de479f2f9f746563d","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"neocaresmileapp-staging-9cfe7","configurations":{"android":"1:295848318344:android:26c06dcab861af0b46563d","ios":"1:295848318344:ios:fb793de479f2f9f746563d","macos":"1:295848318344:ios:fb793de479f2f9f746563d","web":"1:295848318344:web:16a2e128369bbb8f46563d","windows":"1:295848318344:web:5b79e658c3044cf646563d"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "neocaresmileapp-dev",
+          "appId": "1:867470853332:android:c1f75c199e96b3cc1c6741",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "neocaresmileapp-dev",
+          "appId": "1:867470853332:ios:58da6a24e55943c91c6741",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "neocaresmileapp-dev",
+          "appId": "1:867470853332:ios:58da6a24e55943c91c6741",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      }
+    },
+    "dart": {
+      "lib/firebase_options_dev.dart": {
+        "projectId": "neocaresmileapp-dev",
+        "configurations": {
+          "android": "1:867470853332:android:c1f75c199e96b3cc1c6741",
+          "ios": "1:867470853332:ios:58da6a24e55943c91c6741",
+          "macos": "1:867470853332:ios:58da6a24e55943c91c6741",
+          "web": "1:867470853332:web:f78268cb448076841c6741",
+          "windows": "1:867470853332:web:729992158e9be4df1c6741"
+        }
+      },
+
+      "lib/firebase_options_staging.dart": {
+        "projectId": "neocaresmileapp-staging-9cfe7",
+        "configurations": {
+          "android": "1:295848318344:android:26c06dcab861af0b46563d",
+          "ios": "1:295848318344:ios:fb793de479f2f9f746563d",
+          "macos": "1:295848318344:ios:fb793de479f2f9f746563d",
+          "web": "1:295848318344:web:16a2e128369bbb8f46563d",
+          "windows": "1:295848318344:web:5b79e658c3044cf646563d"
+        }
+      },
+
+      "lib/firebase_options_prod.dart": {
+        "projectId": "neocaresmileapp-prod-d6930",
+        "configurations": {
+          "android": "1:589102946015:android:17f6b80dadc28a2d89bb6a",
+          "ios": "1:589102946015:ios:c04a879afb02f44389bb6a",
+          "macos": "1:589102946015:ios:c04a879afb02f44389bb6a",
+          "web": "1:589102946015:web:e1c5eac6559e085989bb6a",
+          "windows": "1:589102946015:web:f9671650ba9ccd7389bb6a"
+        }
+      }
+    }
+  }
+}

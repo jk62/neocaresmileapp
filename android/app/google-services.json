@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "295848318344",
-    "project_id": "neocaresmileapp-staging-9cfe7",
-    "storage_bucket": "neocaresmileapp-staging-9cfe7.firebasestorage.app"
+    "project_number": "589102946015",
+    "project_id": "neocaresmileapp-prod-d6930",
+    "storage_bucket": "neocaresmileapp-prod-d6930.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:295848318344:android:26c06dcab861af0b46563d",
+        "mobilesdk_app_id": "1:589102946015:android:2e4ffd85def4d8c589bb6a",
         "android_client_info": {
-          "package_name": "com.neocareapps.neocaresmileapp.dev"
+          "package_name": "com.neocareapps.neocaresmileapp"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDucGS7xGTwEtdIvPg9-gDLqEBbYlRjI5A"
+          "current_key": "AIzaSyBwu6eA2yHUEETD8kO10-9dhOyxh2o6rxQ"
         }
       ],
       "services": {
@@ -26,15 +26,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:295848318344:android:80a25e207afb5c4946563d",
+        "mobilesdk_app_id": "1:589102946015:android:17f6b80dadc28a2d89bb6a",
         "android_client_info": {
-          "package_name": "com.neocareapps.neocaresmileapp.staging"
+          "package_name": "com.neocareapps.neocaresmileapp.dev"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDucGS7xGTwEtdIvPg9-gDLqEBbYlRjI5A"
+          "current_key": "AIzaSyBwu6eA2yHUEETD8kO10-9dhOyxh2o6rxQ"
         }
       ],
       "services": {

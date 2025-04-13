@@ -31,7 +31,7 @@ void main() async {
   devtools.log('This is coming from void main of main.dart');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptionsDev.currentPlatform,
   );
   runApp(const MyApp());
 }
